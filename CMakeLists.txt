@@ -1,10 +1,15 @@
 cmake_minimum_required(VERSION 2.6)
-project(myproject)
+project(IMGUIDM)
+
+# --------------------------------------------------------------------------
+# Unit tests
+enable_testing()
+add_subdirectory(src/3rd_party/catch)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 # Set version information in a config.h file
-set(myproject_VERSION_MAJOR 1)
-set(myproject_VERSION_MINOR 0)
+set(IMGUIDM_VERSION_MAJOR 1)
+set(IMGUIDM_VERSION_MINOR 0)
 configure_file(
   "${PROJECT_SOURCE_DIR}/config.h.in"
   "${PROJECT_BINARY_DIR}/config.h"
@@ -30,21 +35,15 @@ include(${ROOT_USE_FILE})
 include_directories(${CMAKE_SOURCE_DIR} ${ROOT_INCLUDE_DIRS})
 #add_definitions(${ROOT_CXX_FLAGS})
 
-# --------------------------------------------------------
-# Define sources and executable
-set(EXECUTABLE_NAME "myproject")
-add_executable(${EXECUTABLE_NAME} main.cpp)
-target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES} ${ROOT_LIBRARIES} ${OPENGL_LIBRARIES})
-install(TARGETS ${EXECUTABLE_NAME} DESTINATION bin)
-
 add_subdirectory(src/3rd_party)
+add_subdirectory(src/sfml_root)
 add_subdirectory(src/gui)
 
 
 ## CPack packaging
 #include(InstallRequiredSystemLibraries)
 #set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/COPYING")
-#set(CPACK_PACKAGE_VERSION_MAJOR "${myproject_VERSION_MAJOR}")
-#set(CPACK_PACKAGE_VERSION_MINOR "${myproject_VERSION_MINOR}")
+#set(CPACK_PACKAGE_VERSION_MAJOR "${IMGUIDM_VERSION_MAJOR}")
+#set(CPACK_PACKAGE_VERSION_MINOR "${IMGUIDM_VERSION_MINOR}")
 #include(CPack)
 
