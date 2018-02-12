@@ -7,9 +7,13 @@
 #include "imgui_impl_glfw_gl3.h"
 #include <stdio.h>
 #include <math.h>
-#include <GL/gl3w.h>    // This example is using gl3w to access OpenGL functions (because it is small). You may use glew/glad/glLoadGen/etc. whatever already works for you.
+#include <thread>
+#include <GL/gl3w.h>// This example is using gl3w to access OpenGL functions (because it is small). You may use glew/glad/glLoadGen/etc. whatever already works for you.
 #include <GLFW/glfw3.h>
+#include "PVMonitor.h"
+#include "PVGetList.h"
 
+int test_getme(const char* pvname);
 static void error_callback(int error, const char* description)
 {
     fprintf(stderr, "Error %d: %s\n", error, description);
@@ -25,6 +29,31 @@ struct MainMenu {
 
 int main(int, char**)
 {
+
+  std::vector<std::string> pvs = {
+    "whit:circle:angle",
+    "whit:circle:period",
+    "whit:circle:x",
+    "whit:circle:y"
+  };
+  imguiDM::PVGetList get_list1(pvs);
+
+  bool quit_polling = false;
+
+  std::thread thread_1(
+    [&](){
+      while(!quit_polling) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        get_list1.Poll();
+      }
+    });
+
+  //auto monitors_vec = imguiDM::test_pvmonitor2();
+  //test_getme("whit:circle:angle");
+  //pvac::ClientProvider provider("ca");
+  //pvac::ClientChannel channel(provider.connect("whit:circle:angle"));
+  //std::cout << channel.name() << " : " << channel.get() << "\n";
+
     // Setup window
     glfwSetErrorCallback(error_callback);
     if (!glfwInit())
@@ -157,8 +186,10 @@ int main(int, char**)
                 values[values_offset] = cosf(phase);
                 values_offset = (values_offset+1) % IM_ARRAYSIZE(values);
                 phase += 0.10f*values_offset;
-                refresh_time += 1.0f/60.0f;
+                refresh_time += 1.0f/10.0f;
+                get_list1.PrintAll();
             }
+            
             ImGui::PlotLines("Lines", values, IM_ARRAYSIZE(values), values_offset, "avg 0.0", -1.0f, 1.0f, ImVec2(0,80));
             ImGui::PlotHistogram("Histogram", arr, IM_ARRAYSIZE(arr), 0, NULL, 0.0f, 1.0f, ImVec2(0,80));
 
@@ -177,6 +208,15 @@ int main(int, char**)
             float (*func)(void*, int) = (func_type == 0) ? Funcs::Sin : Funcs::Saw;
             ImGui::PlotLines("Lines", func, NULL, display_count, 0, NULL, -1.0f, 1.0f, ImVec2(0,80));
             ImGui::PlotHistogram("Histogram", func, NULL, display_count, 0, NULL, -1.0f, 1.0f, ImVec2(0,80));
+            ImGui::Separator();
+            ImGui::PlotLines(get_list1.GetName(0).c_str(), get_list1.GetBuffer(0).data(), get_list1.GetBuffer(0).size(), 
+                             0, "A", -1.0f, 300.0f, ImVec2(0,80));
+            ImGui::PlotLines(get_list1.GetName(1).c_str(), get_list1.GetBuffer(1).data(), get_list1.GetBuffer(1).size(), 
+                             0, "B", -1.0f, 1.0f, ImVec2(0,80));
+            ImGui::PlotLines(get_list1.GetName(2).c_str(), get_list1.GetBuffer(2).data(), get_list1.GetBuffer(2).size(), 
+                             0, "C", -1.0f, 1.0f, ImVec2(0,80));
+            ImGui::PlotLines(get_list1.GetName(3).c_str(), get_list1.GetBuffer(3).data(), get_list1.GetBuffer(3).size(), 
+                             0, "C", -1.0f, 1.0f, ImVec2(0,80));
             ImGui::Separator();
 
             //ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f    
@@ -217,5 +257,67 @@ int main(int, char**)
     ImGui::DestroyContext();
     glfwTerminate();
 
+  thread_1.join();
+
     return 0;
 }
+
+
+int test_getme(const char* pvname)
+{
+//  epics::RefMonitor refmon;
+//  double waitTime = 1.0;
+//  std::string providerName("ca");
+//  typedef std::vector<std::string> pvs_t;
+//  pvs_t pvs;
+//  pvs.push_back(std::string(pvname));
+//
+//#ifdef USE_SIGNAL
+//  signal(SIGINT, alldone);
+//  signal(SIGTERM, alldone);
+//  signal(SIGQUIT, alldone);
+//#endif
+//
+//  // build "pvRequest" which asks for all fields
+//  pvd::PVStructure::shared_pointer pvReq(pvd::createRequest("field()"));
+//
+//  // explicitly select configuration from process environment
+//  pva::Configuration::shared_pointer conf(pva::ConfigurationBuilder().push_env().build());
+//
+//  // "pva" provider automatically in registry
+//  // add "ca" provider to registry
+//  pva::ca::CAClientFactory::start();
+//
+//  std::cout << "Use provider: " << providerName << "\n";
+//  pvac::ClientProvider provider(providerName, conf);
+//
+//  // need to store references to keep get (and channel) from being closed
+//  typedef std::set<Getter::shared_pointer> gets_t;
+//  gets_t gets;
+//
+//  for(const auto& pv : pvs) {
+//  //for(pvs_t::const_iterator it=pvs.begin(); it!=pvs.end(); ++it) {
+//    //const std::string& pv = *it;
+//
+//    Getter::shared_pointer get(new Getter(provider, pv));
+//    // addConnectListener() always invokes connectEvent() with current state
+//
+//    gets.insert(get);
+//  }
+//
+//  if(waitTime<0.0)
+//    done.wait();
+//  else
+//    done.wait(waitTime);
+//
+//  //if(refmon.running()) {
+//  //  refmon.stop();
+//  //  // drop refs to operations, but keep ref to ClientProvider
+//  //  gets.clear();
+//  //  // show final counts
+//  //  refmon.current();
+//  //}
+
+  return 0;
+}
+
