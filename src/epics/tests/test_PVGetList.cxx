@@ -12,21 +12,21 @@ SCENARIO( "PVGetList is empty", "[PVGetList]" ) {
 
   GIVEN( "no constructor arguments " ) {
     WHEN( " constructor" ) {
-      imguiDM::PVGetList get_list0;
+      ImGuiDM::PVGetList get_list0;
       REQUIRE( 1 == 1 );
     }
     WHEN( "copy constructor" ) {
-      auto get_list1 = imguiDM::PVGetList();
+      auto get_list1 = ImGuiDM::PVGetList();
       REQUIRE( 1 == 1 );
     }
   GIVEN( "A vector with one PV name" ) {
     std::vector<std::string> pvs = {"whit:circle:angle"};
     WHEN( "normal constructor" ) {
-      imguiDM::PVGetList get_list2(pvs);
+      ImGuiDM::PVGetList get_list2(pvs);
       REQUIRE( 1 == 1 );
     }
     WHEN( "copy constructor" ) {
-      auto  get_list3  = imguiDM::PVGetList(pvs);
+      auto  get_list3  = ImGuiDM::PVGetList(pvs);
       REQUIRE( 1 == 1 );
     }
   }
@@ -34,22 +34,22 @@ SCENARIO( "PVGetList is empty", "[PVGetList]" ) {
 
     std::vector<std::string> pvs = {"whit:circle:angle","whit:circle:period"};
     WHEN( "normal constructor" ) {
-      imguiDM::PVGetList get_list2(pvs);
+      ImGuiDM::PVGetList get_list2(pvs);
       REQUIRE( 1 == 1 );
     }
     WHEN( "copy constructor" ) {
-      auto  get_list3  = imguiDM::PVGetList(pvs);
+      auto  get_list3  = ImGuiDM::PVGetList(pvs);
       REQUIRE( 1 == 1 );
     }
   }
   GIVEN( "A vector with repeated PV name" ) {
     std::vector<std::string> pvs = {"whit:circle:angle","whit:circle:period","whit:circle:angle","whit:circle:period"};
     WHEN( "normal constructor" ) {
-      imguiDM::PVGetList get_list2(pvs);
+      ImGuiDM::PVGetList get_list2(pvs);
       REQUIRE( get_list2.GetN() == 2 );
     }
     WHEN( "copy constructor" ) {
-      auto  get_list3  = imguiDM::PVGetList(pvs);
+      auto  get_list3  = ImGuiDM::PVGetList(pvs);
       REQUIRE( get_list3.GetN() == 2 );
       THEN( " when adding more PVs " ) {
         get_list3.AddPV("whit:circle:x");

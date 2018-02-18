@@ -9,7 +9,7 @@
 
 #include "pva/client.h"
 
-namespace imguiDM {
+namespace ImGuiDM {
 
   /** PV Get-List. Continuously updated list of variables.
    *
@@ -29,9 +29,12 @@ namespace imguiDM {
     PV_name_map           m_pv_names;
     PV_value_map          m_pv_values;
     PV_channel_map        m_pv_channels;
+    std::vector<int>      m_array_index;
 
     std::vector<PV_value_map> m_pv_buffers;
-    int  m_buffer_max  = 2000;
+    int  m_buffer_max      = 1000;
+
+    std::vector<PV_value_map> m_buffer_copy;
 
   public:
     PVGetList();
@@ -46,15 +49,27 @@ namespace imguiDM {
 
     float GetValue(const std::string& n) const; 
     float GetValue(int n) const;
+
     std::string GetName(int n) const { return m_pv_names.at(n);}
+
+    // This would load history at startup
+    void Init() { } 
 
     int GetN() const {return m_N_pvs;}
 
-    std::vector<float>& GetBuffer(int n) ;
+    unsigned int GetNBuffers() const { m_pv_buffers.size(); }
+    int GetBufferSize(int n) const ;
+
+    int GetBufferOffset(int n) const ;
+    
+
+    //const std::vector<float>& GetBuffer(int n) const { return m_pv_buffers.at(n); }
+    std::vector<float>&      GetBuffer(int n) ;
+    std::vector<float>&      GetBufferCopy(int n) ;
 
     void PrintAll() const;
 
-    /** This actually goes to CA and gets new values for all variables
+    /** This actually goes to CA and gets new values for all variables.
      */
     void Poll();
 

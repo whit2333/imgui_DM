@@ -1,23 +1,43 @@
 cmake_minimum_required (VERSION 3.5)
 
+configure_file(
+  "ImGuiDMConfig.h.in"
+  "${PROJECT_BINARY_DIR}/ImGuiDMConfig.h"
+  )
+
+find_package(Threads REQUIRED)
+
 # --------------------------------------------------------
 #
 add_executable(demo 
   src/main.cpp
+  src/ImGuiDM.cpp
+  ../3rd_party/addons/imguivariouscontrols/imguivariouscontrols.cpp
+  #../3rd_party/metrics_gui/source/metrics_gui.cpp
+  include/ImGuiDM.h
   )
 target_link_libraries(demo 
   ImGui 
   epics 
+  Threads::Threads
   ${EPICS_LIBRARIES}
   ${SFML_LIBRARIES} 
   ${ROOT_LIBRARIES} 
   ${OPENGL_LIBRARIES}
   )
 target_include_directories(demo
+  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
   PUBLIC include
-  PUBLIC src/3rd_party/imgui
+  PUBLIC ../3rd_party/imgui
+  PUBLIC ../3rd_party/addons/imguivariouscontrols
   PUBLIC ${EPICS_INCLUDE_DIRS}
   )
+target_compile_features(demo
+    PUBLIC cxx_auto_type
+    PUBLIC cxx_trailing_return_types
+    PRIVATE cxx_variadic_templates
+    PRIVATE cxx_std_17
+    )
 
 # --------------------------------------------------------
 #
@@ -55,3 +75,20 @@ target_link_libraries(${test_name}
   PRIVATE Catch)
 add_test(NAME ${test_name} COMMAND ${test_name})
 
+# test_line
+set(test_name hello_triangle_indexed)
+add_executable(${test_name} 
+  tests/${test_name}.cpp
+  src/glad.c
+  )
+target_include_directories(${test_name} PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+  PUBLIC src/3rd_party/imgui
+  )
+target_link_libraries(${test_name} 
+  PRIVATE ImGui  ${SFML_LIBRARIES}  ${ROOT_LIBRARIES} ${OPENGL_LIBRARIES} -lGLEW -lGLU -lGL )
+target_link_libraries(${test_name}
+  PRIVATE Catch)
+add_test(NAME ${test_name} COMMAND ${test_name})

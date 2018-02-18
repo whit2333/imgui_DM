@@ -1,5 +1,6 @@
 #include "imgui.h"
 #include "imgui-SFML.h"
+#include <thread>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Clock.hpp>
