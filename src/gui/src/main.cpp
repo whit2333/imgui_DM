@@ -19,6 +19,8 @@
 #include "imguivariouscontrols.h"
 
 #include "TH1F.h"
+#include <iomanip>
+#include <sstream>
 
 static const char* vertex_shader_text =
 "#version 330 core\n"
@@ -213,10 +215,6 @@ int main(int argc, char** argv)
   auto& S    = app.settings;
   auto& gps_conf = app.gps_conf;
 
-  TH1F *h1 = new TH1F("h1", "h11", 10, -1, 1);
-  h1->FillRandom("gaus");
-  h1->SetFillColor(2);
-
   auto cli_basics = (
     ( option("-r", "--run") & value("run_number",S.run_number) )      % "set the run number",
     //( option("-E", "--energy") & number("energy",gps_conf.energy) )      % "set beam energy [MeV]",
@@ -373,6 +371,10 @@ int main(int argc, char** argv)
 
   ImGuiDM::PVGetList get_list1(pvs);
 
+  TH1F *h1 = new TH1F("h1", "h11", 100, -1, 1);
+  h1->FillRandom("gaus", 10000);
+  h1->SetFillColor(2);
+
 
   bool quit_polling = false;
 
@@ -381,6 +383,7 @@ int main(int argc, char** argv)
       while(!quit_polling) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
         get_list1.Poll();
+        h1->Fill(get_list1.GetValue(2));
       }
     });
 
@@ -428,11 +431,11 @@ int main(int argc, char** argv)
   // - The fonts will be rasterized at a given size (w/ oversampling) and stored into a texture when calling ImFontAtlas::Build()/GetTexDataAsXXXX(), which ImGui_ImplXXXX_NewFrame below will call.
   // - Read 'misc/fonts/README.txt' for more instructions and details.
   // - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
-  io.Fonts->AddFontDefault();
+  //io.Fonts->AddFontDefault();
+  io.Fonts->AddFontFromFileTTF("../share/fonts/Roboto-Medium.ttf", 16.0f);
   io.Fonts->AddFontFromFileTTF("../share/fonts/Cousine-Regular.ttf", 15.0f);
   io.Fonts->AddFontFromFileTTF("../share/fonts/DroidSans.ttf", 16.0f);
   io.Fonts->AddFontFromFileTTF("../share/fonts/ProggyTiny.ttf", 10.0f);
-  io.Fonts->AddFontFromFileTTF("../share/fonts/Roboto-Medium.ttf", 16.0f);
   //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
   //IM_ASSERT(font != NULL);
 
@@ -495,7 +498,7 @@ int main(int argc, char** argv)
     //// We set the same viewport size (plus margin) to the next window (if first use)
     //ImGui::SetNextWindowSize(ImVec2(W + 10, H + 10),
     //                         ImGuiSetCond_FirstUseEver);
-    ImGui::Begin("Game rendering");
+    ImGui::Begin("Graph Rendering");
     {
       auto cur_w = ImGui::GetWindowWidth();
       auto cur_h = ImGui::GetWindowHeight();
@@ -503,15 +506,79 @@ int main(int argc, char** argv)
       auto wmin = ImGui::GetWindowContentRegionMin();
       auto wmax = ImGui::GetWindowContentRegionMax();
       // Get the current cursor position (where your window is)
+      std::cout << " wpos " << wpos.x << ", " << wpos.y  << "\n";
+      std::cout << " wmin " << wmin.x << ", " << wmin.y  << "\n";
+      std::cout << " wmax " << wmax.x << ", " << wmax.y  << "\n";
+      float x_margin = 0.05*wmax.x;
+      float y_margin = 0.05*wmax.y;
+      float x_plot_range  = wmax.x - wmin.x - 2.0*x_margin;
+      float y_plot_range  = wmax.y - wmin.y - 2.0*y_margin;
+
       ImVec2 pos = ImGui::GetCursorScreenPos();
-      ImGui::GetWindowDrawList()->AddLine(ImVec2(wpos.x+wmin.x, wpos.y+wmin.y), 
-                                          ImVec2(wpos.x+wmin.x, wpos.y+wmax.y) ,
+
+      ImVec2 origin(wpos.x+wmin.x+x_margin,wpos.y+wmax.y-y_margin);
+      int nbins = h1->GetNbinsX();
+      float bin_width = x_plot_range/float(nbins);
+      float maximum_value = h1->GetMaximum();
+      float bin_scale = y_plot_range/maximum_value;
+      // axis
+      // y axis
+      ImGui::GetWindowDrawList()->AddLine(ImVec2(origin.x, origin.y), 
+                                          ImVec2(origin.x, origin.y-y_plot_range),
                                           IM_COL32(255,0,0,255), 
                                           3.0f );
-      ImGui::GetWindowDrawList()->AddLine(ImVec2(wpos.x+wmin.x, wpos.y+wmax.y), 
-                                          ImVec2(wpos.x+wmax.x, wpos.y+wmax.y) ,
-                                          IM_COL32(255,0,0,255), 
+      // x axis
+      ImGui::GetWindowDrawList()->AddLine(ImVec2(origin.x, origin.y), 
+                                          ImVec2(origin.x+x_plot_range, origin.y) ,
+                                          IM_COL32(200,100,0,255), 
                                           3.0f );
+      float x_min = h1->GetBinLowEdge(1);
+      float x_max = h1->GetBinLowEdge(nbins+1);
+      float y_min = 0.0;//h1->GetMinimum();
+      float y_max = h1->GetMaximum();
+
+      //std::stringstream stream;
+      //stream << std::fixed << std::setprecision(2) << x_min;
+      //std::string xaxis_label1 = stream.str();
+      //std::stringstream stream2;
+      //stream2 << std::fixed << std::setprecision(2) << x_max;
+      //std::string xaxis_label2 = stream2.str();
+      float x_label_shift = 12.0;
+
+      //ImGui::GetWindowDrawList()->AddText(ImVec2(origin.x -x_label_shift, origin.y+y_margin/3), IM_COL32(255,255,255,255), xaxis_label1.c_str());
+      //ImGui::GetWindowDrawList()->AddText(ImVec2(origin.x+x_plot_range-x_label_shift, origin.y+y_margin/3), IM_COL32(255,255,255,255), xaxis_label2.c_str());
+
+      int N_y_label = 10;
+      float  delta_y = y_plot_range/float(N_y_label-1);
+      float  delta_yval = (y_max-y_min)/float(N_y_label-1);
+      float y_label_shift = 5;
+      float y_label_offset = 34;
+      for(int iy =0; iy<=N_y_label;iy++){
+        float y_val = y_min +float(iy)*delta_yval;
+        std::stringstream stream;
+        stream << std::fixed << std::setprecision(0) << y_val;
+        ImGui::GetWindowDrawList()->AddText(ImVec2(origin.x-y_label_offset , origin.y -iy*delta_y-y_label_shift), IM_COL32(255,255,255,255), stream.str().c_str());
+      }
+      //AddText(const ImVec2& pos, ImU32 col, const char* text_begin
+      for(int ib = 1; ib<=nbins+1; ib++ )
+      {
+        if((ib-1)%5==0){
+          //periodically label the bins
+          std::stringstream stream;
+          stream << std::fixed << std::setprecision(2) << h1->GetBinLowEdge(ib);
+          ImGui::GetWindowDrawList()->AddText(ImVec2(origin.x -x_label_shift+ib*bin_width-bin_width/2.0, origin.y+y_margin/3), IM_COL32(255,255,255,255), stream.str().c_str());
+        }
+      }
+      for(int ib = 1; ib<=nbins; ib++ )
+      {
+        ImGui::GetWindowDrawList()->AddLine(ImVec2(origin.x + ib*bin_width-bin_width/2.0, origin.y), 
+                                            ImVec2(origin.x + ib*bin_width-bin_width/2.0, origin.y - bin_scale*h1->GetBinContent(ib)),
+                                            IM_COL32(0,0,255,255), 
+                                            2.0f );
+
+      }
+
+
     }
     ImGui::End();
 
