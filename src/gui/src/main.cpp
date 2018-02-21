@@ -362,11 +362,12 @@ int main(int argc, char** argv)
   std::cout << "output : " << S.output_file_name << std::endl;
   std::cout << "  tree : " << S.output_tree_name << std::endl;
 
+  const char* env_user = std::getenv("USER");
   std::vector<std::string> pvs = {
-    "whit:circle:angle",
-    "whit:circle:period",
-    "whit:circle:x",
-    "whit:circle:y"
+    std::string(env_user)+":circle:angle",
+    std::string(env_user)+":circle:period",
+    std::string(env_user)+":circle:x",
+    std::string(env_user)+":circle:y"
   };
 
   ImGuiDM::PVGetList get_list1(pvs);
