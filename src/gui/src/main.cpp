@@ -383,7 +383,9 @@ int main(int argc, char** argv)
       while(!quit_polling) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
         get_list1.Poll();
+        if(get_list1.GetN()>=3){
         h1->Fill(get_list1.GetValue(2));
+        }
       }
     });
 
@@ -654,6 +656,7 @@ int main(int argc, char** argv)
       //}
       //std::cout << "\n";
 
+      if(get_list1.GetN()>=4){
       ImGui::PlotLines(get_list1.GetName(0).c_str(), get_list1.GetBuffer(0).data()+get_list1.GetBufferOffset(0), get_list1.GetBufferSize(0), 
                        0, "A", -1.0f, 300.0f, ImVec2(0,80));
 
@@ -666,18 +669,24 @@ int main(int argc, char** argv)
       ImGui::PlotLines(get_list1.GetName(3).c_str(), get_list1.GetBuffer(3).data()+get_list1.GetBufferOffset(3), get_list1.GetBufferSize(3), 
                        0, "C", -1.0f, 1.0f, ImVec2(0,80));
 
+      }
       ImGui::Separator();
       //std::cout << " angle : " << get_list1.GetValue(0) << std::endl;
 
 
       // Call once a frame with current value
+     
+      
+      if(get_list1.GetN()>=4){
       ImGuiDM::PlotVar("Speed", get_list1.GetValue(2));
       ImGuiDM::PlotVar("Speed2", get_list1.GetValue(3));
+      }
 
       // inside a ImGui::Window:
       ImGui::TestProgressBar();
       ImGui::TestPopupMenuSimple();
 
+      if(get_list1.GetN()>=4){
       //
       std::vector<std::string> names = {get_list1.GetName(0),get_list1.GetName(1),get_list1.GetName(2)};
       std::vector<ImColor> colors =  {ImColor(255,255,0,100), ImColor(0,255,0,100),ImColor(255,0,0,200)};//const ImColor* colors,
@@ -692,6 +701,7 @@ int main(int argc, char** argv)
         get_list1.m_buffer_copy,
         -1.0, 1.0, ImVec2(0,80));
 
+      }
 
       //ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f    
       //ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color

@@ -48,15 +48,24 @@ namespace ImGuiDM {
     for(const auto& name : names ){
       if (m_pv_index.count(name) == 0 ) {
         int index = m_N_pvs;
-        m_pv_names[index]    = name;
-        m_pv_channels[index] =  m_provider->connect(name);
-        auto ret = m_pv_channels[index].get(1.0);//5.0,epics::pvData::ValueBuilder()
+        decltype(m_pv_channels[index].get()) ret ;
+        // hanle the timeout by ignoring that variable
+        try {
+          m_pv_channels[index] =  m_provider->connect(name);
+          ret = m_pv_channels[index].get(2.0);//5.0,epics::pvData::ValueBuilder()
                                             //.addNested("whit")
                                             //.addNested("circle")
                                             //.add<epics::pvData::pvDouble>("angle", 42.0)
                                             //.endNested()
                                             //.endNested()
                                             //.buildPVStructure());
+        } 
+        catch (std::exception& e)
+        {
+          std::cout << e.what() << '\n';
+          continue;
+        }
+        m_pv_names[index]    = name;
         auto nfs = ret->getNumberFields(); 
         auto val = ret->getSubField<epics::pvData::PVDouble>("value");
         m_pv_values.push_back( val->getAs<float>());
@@ -148,6 +157,7 @@ namespace ImGuiDM {
   void PVGetList::Poll()
   {
     std::lock_guard<std::mutex> lockGuard(m_impl->m);
+    if(m_N_pvs > 0) {
     for(auto& channel_pair : m_pv_channels) {
       int index = channel_pair.first;
       auto ret = channel_pair.second.get();
@@ -178,6 +188,7 @@ namespace ImGuiDM {
       //if(m_pv_buffers[index].size() > (m_buffer_max + m_buffer_extra)) {
       //  m_pv_buffers[index].erase(m_pv_buffers[index].begin(),m_pv_buffers[index].begin()+m_buffer_extra);
       //}
+    }
     }
   }
   //______________________________________________________________________________
