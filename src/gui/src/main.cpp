@@ -22,101 +22,20 @@
 #include <iomanip>
 #include <sstream>
 
-static const char* vertex_shader_text =
-"#version 330 core\n"
-"layout(location = 0) in vec3 vertexPosition_modelspace;\n"
-"void main(){\n"
-"    gl_Position.xyz = vertexPosition_modelspace;\n"
-"    gl_Position.w = 1.0;\n"
-"}\n";
-//"uniform mat4 MVP;\n"
-//"attribute vec3 vCol;\n"
-//"attribute vec2 vPos;\n"
-//"varying vec3 color;\n"
-//"void main()\n"
-//"{\n"
-//"    gl_Position = MVP * vec4(vPos, 0.0, 1.0);\n"
-//"    color = vCol;\n"
-//"}\n";
-static const char* fragment_shader_text =
-"#version 330 core\n"
-"out vec4 FragColor;\n"
-"void main(){\n"
-"  FragColor = vec4(1.0f, 0.5f, 0.2f, 0.4f);"
-"}\n";
-
-//GLuint LoadShaders(){
-//
-//  // Create the shaders
-//  GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-//  GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-//
-//  GLint Result = GL_FALSE;
-//  int InfoLogLength;
-//
-//  // Compile Vertex Shader
-//  //printf("Compiling shader : %s\n", vertex_file_path);
-//  //char const * VertexSourcePointer = VertexShaderCode.c_str();
-//  glShaderSource(VertexShaderID, 1, &vertex_shader_text , NULL);
-//  glCompileShader(VertexShaderID);
-//
-//  // Check Vertex Shader
-//  glGetShaderiv(VertexShaderID, GL_COMPILE_STATUS, &Result);
-//  glGetShaderiv(VertexShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
-//  if ( InfoLogLength > 0 ){
-//    std::vector<char> VertexShaderErrorMessage(InfoLogLength+1);
-//    glGetShaderInfoLog(VertexShaderID, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
-//    printf("%s\n", &VertexShaderErrorMessage[0]);
-//  }
-//
-//  // Compile Fragment Shader
-//  //printf("Compiling shader : %s\n", fragment_file_path);
-//  //char const * FragmentSourcePointer = FragmentShaderCode.c_str();
-//  glShaderSource(FragmentShaderID, 1, &fragment_shader_text , NULL);
-//  glCompileShader(FragmentShaderID);
-//
-//  // Check Fragment Shader
-//  glGetShaderiv(FragmentShaderID, GL_COMPILE_STATUS, &Result);
-//  glGetShaderiv(FragmentShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
-//  if ( InfoLogLength > 0 ){
-//    std::vector<char> FragmentShaderErrorMessage(InfoLogLength+1);
-//    glGetShaderInfoLog(FragmentShaderID, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
-//    printf("%s\n", &FragmentShaderErrorMessage[0]);
-//  }
-//
-//  // Link the program
-//  printf("Linking program\n");
-//  GLuint ProgramID = glCreateProgram();
-//  glAttachShader(ProgramID, VertexShaderID);
-//  glAttachShader(ProgramID, FragmentShaderID);
-//  glLinkProgram(ProgramID);
-//
-//  // Check the program
-//  glGetProgramiv(ProgramID, GL_LINK_STATUS, &Result);
-//  glGetProgramiv(ProgramID, GL_INFO_LOG_LENGTH, &InfoLogLength);
-//  if ( InfoLogLength > 0 ){
-//    std::vector<char> ProgramErrorMessage(InfoLogLength+1);
-//    glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-//    printf("%s\n", &ProgramErrorMessage[0]);
-//  }
-//
-//
-//  glDetachShader(ProgramID, VertexShaderID);
-//  glDetachShader(ProgramID, FragmentShaderID);
-//
-//  glDeleteShader(VertexShaderID);
-//  glDeleteShader(FragmentShaderID);
-//
-//  return ProgramID;
-//}
-
-
-
 
 template<class C>
 void print_help(C cli)
 {
   std::cout << make_man_page(cli, "bubble_chamber") << "\n";
+}
+//______________________________________________________________________________
+
+template<typename T>
+void print_usage(T cli, const char* argv0 )
+{
+  //used default formatting
+  std::cout << "Usage:\n" << usage_lines(cli, argv0)
+            << "\nOptions:\n" << documentation(cli) << '\n';
 }
 //______________________________________________________________________________
 
@@ -153,15 +72,6 @@ void copy_files(const std::vector<std::string>& files)
 //______________________________________________________________________________
 
 template<typename T>
-void print_usage(T cli, const char* argv0 )
-{
-  //used default formatting
-  std::cout << "Usage:\n" << usage_lines(cli, argv0)
-            << "\nOptions:\n" << documentation(cli) << '\n';
-}
-//______________________________________________________________________________
-
-template<typename T>
 void print_man_page(T cli, const char* argv0 ){
   //all formatting options (with their default values)
   auto fmt = clipp::doc_formatting{}
@@ -189,7 +99,6 @@ void print_man_page(T cli, const char* argv0 ){
   //.alternatives_min_split_size(3)            //min. # of parameters for separate usage line
   //.merge_alternative_flags_with_common_prefix(false)  //-ab(cdxy|xy) instead of -abcdxy|-abxy
   //.merge_joinable_flags_with_common_prefix(true);    //-abc instead of -a -b -c
-
   auto mp = make_man_page(cli, argv0, fmt);
   mp.prepend_section("DESCRIPTION", "Bubble chamber simulation");
   mp.append_section("EXAMPLES", " $ bubble_chamber -h ");
@@ -203,6 +112,7 @@ static void error_callback(int error, const char* description)
 }
 //______________________________________________________________________________
 
+
 int main(int argc, char** argv)
 {
   using namespace clipp;
@@ -211,76 +121,18 @@ int main(int argc, char** argv)
   using Mode     = ImGuiDM::Settings::Mode;
 
   ImGuiDM::ImGuiDMApplication app;
-  auto& menu = app.menu;
-  auto& S    = app.settings;
+  auto& menu     = app.menu;
+  auto& S        = app.settings;
   auto& gps_conf = app.gps_conf;
 
   auto cli_basics = (
     ( option("-r", "--run") & value("run_number",S.run_number) )      % "set the run number",
-    //( option("-E", "--energy") & number("energy",gps_conf.energy) )      % "set beam energy [MeV]",
-    //(option("-v","--vertex").set(S.vertex_set) & value("x", S.vertex[0]) & value("y",  S.vertex[1]) & value("z", S.vertex[2])) % "vertex position [mm]",
-    //( option("-m", "--macro") & value("macro",S.macroFile).set(S.has_macro_file,true) )      % "set the run number",
-    //option("-b", "--batch")([&](){S.use_gui=false; S.use_vis=false; S.is_interactive=false;}) % "run in batch mode (no gui or vis)",
-    //(option("-g", "--gui") & integer("gui")([&](auto v){S.use_gui=v;}))                 % "use GUI ",
-    //option("-i", "--interactive")([&](){S.is_interactive=true;}) % "run in interactivemode ",
-    //(option("-v", "--vis") & integer("vis")([&](auto v){S.use_vis=v;})) % "use vis ",
     option("-h", "--help").set(S.selected,Mode::help)
     );
   
   auto help_mode = command("help").set(S.selected, Mode::help);
-  //auto copy_mode = (command("copy").set(S.selected, Mode::copy) % "Copy example/stock files to the current directory.",
-  //                  (command("macro") % "selec macro to copy",
-  //                   option("-v","--vis").set(S.copy_sel,CopyMode::vis)  % "all vis macro.",
-  //                   option("-v1","--vis1").set(S.copy_sel,CopyMode::v1) % "only vis.mac is copied."
-  //                  "This macro visualizes the detector using the qt gui and runs 1000",
-  //                   option("-v2","--vis2").set(S.copy_sel,CopyMode::v2) % "vis2 mac only")
-  //                 );
-  //auto gps_build_energy = (
-  //  "Mono energetic GPS distributated like I∝δ(E−E0) with one parameter" % (
-  //    command("Mono")                   % "type name"  &
-  //    value("E0")                       % "E0 fixed energy parameter" & 
-  //    ( option("MeV")|option("GeV") ) % "Units [default:MeV]" )
-  //  |
-  //  "Gaussian distributed  distribution with two parameters. I=(2πσ)−12exp[−(E/E0)2/σ2] Mean energy E0, std deviation σ" % (
-  //    command("Gauss")                  % "type name"  & 
-  //    value("E0")                       % "mean energy" & 
-  //    ( option("MeV")|option("GeV") ) % "Units [default:MeV]"  &
-  //    value("sigma")                    % "sigma: std deviation " & 
-  //    ( option("MeV")|option("GeV") ) % "Units [default:MeV]" )
-  //  |
-  //  "Exp  - exponential    I∝exp(−E/E0) Energy scale-height E0" % (
-  //    command("Exp")                    % " typename " & 
-  //    value("E0")                       % "E0 fixed energy parameter" & 
-  //    ( option("MeV")|option("GeV") ) % "Units [default:MeV]" )
-  //  |
-  //  "Lin  - linear         I∝I0+m×E Intercept I0 , slope m" % ( 
-  //    command("Lin")                    % "type name" & 
-  //    value("I0")                       % "I0 intercept" & 
-  //    value("m")                        % "slope" & 
-  //    ( option("MeV")|option("GeV") ) % "inverse Units [default:MeV]" )
-  //  |
-  //  "Pow  - power-law      I∝Eα Spectral index α" % (
-  //    command("Pow")                    % " typename" &
-  //    value("alpha")                    % "alpha parameter" & 
-  //    ( option("MeV")|option("GeV") ) % "Units [default:MeV]")
-  //  //command("brem")        % "Brem - bremsstrahlung I=∫2E2[h2c2(exp(−E/kT)−1)]−1 Temperature T",
-  //  //command("Bbody")       % "Bbody- black body     I∝(kT)12Eexp(−E/kT) Temperature T",
-  //  //command("cdg")         % "Cdg  - cosmic diffuse gamma ray I∝[(E/Eb)α1+(E/Eb)α2]−1 Energy range Emin to Emax; Eb and indices α1 and α2 are fixed"
-  //  ) ;
-  //
-  //auto gps_mode = "gps mode:" % (
-  //  command("gps") & 
-  //  "GPS energy confugration" % (
-  //    command("energy") % "Energy Dist Type. See G4 docs for details (https://tinyurl.com/ydgsc5qj)" & gps_build_energy 
-  //    )
-  //    //|
-  //    //command("angle") % "Angular Dist Type " &
-  //    //"List of Angular Distributions:" % (command("iso") % "iso"| command("flat") % "flat" )
-  //  );
   auto cli = ( //help_mode % "print help this help"
               cli_basics % "typical style commands");
-              //|copy_mode % "Copy mode"
-              //|gps_mode  
 
   //assert( cli.flags_are_prefix_free() );
   auto result = parse(argc, argv, cli);
@@ -310,6 +162,7 @@ int main(int argc, char** argv)
       std::cout << " [unmapped]\n";
     }
   }
+  //________________________________________________________________
 
   cout << "missing parameters:\n";
   for(const auto& m0 : result.missing()) {
@@ -323,6 +176,7 @@ int main(int argc, char** argv)
     print_man_page(cli, argv[0]);
     return 0;
   }
+  //________________________________________________________________
 
   switch(S.selected) {
     case Mode::help : 
@@ -361,6 +215,7 @@ int main(int argc, char** argv)
   std::cout << " the rest of the arguments: " << S.theRest << std::endl;
   std::cout << "output : " << S.output_file_name << std::endl;
   std::cout << "  tree : " << S.output_tree_name << std::endl;
+  //________________________________________________________________
 
   const char* env_user = std::getenv("USER");
   std::vector<std::string> pvs = {
@@ -375,7 +230,6 @@ int main(int argc, char** argv)
   TH1F *h1 = new TH1F("h1", "h11", 100, -1, 1);
   h1->FillRandom("gaus", 10000);
   h1->SetFillColor(2);
-
 
   bool quit_polling = false;
 
@@ -416,36 +270,38 @@ int main(int argc, char** argv)
   glfwSwapInterval(1); // Enable vsync
   gl3wInit();
 
-  // Setup ImGui binding
-  ImGui::CreateContext();
-  ImGuiIO& io = ImGui::GetIO(); (void)io;
-  ImGui_ImplGlfwGL3_Init(window, true);
-  //io.NavFlags |= ImGuiNavFlags_EnableKeyboard;  // Enable Keyboard Controls
-  //io.NavFlags |= ImGuiNavFlags_EnableGamepad;   // Enable Gamepad Controls
+  //// Setup ImGui binding
+  //ImGui::CreateContext();
+  //ImGuiIO& io = ImGui::GetIO();
+  ////(void)io;
+  //ImGui_ImplGlfwGL3_Init(window, true);
+  ////io.NavFlags |= ImGuiNavFlags_EnableKeyboard;  // Enable Keyboard Controls
+  ////io.NavFlags |= ImGuiNavFlags_EnableGamepad;   // Enable Gamepad Controls
 
-  // Setup style
-  ImGui::StyleColorsDark();
-  //ImGui::StyleColorsClassic();
+  app.Init(window);
+  //// Setup style
+  //ImGui::StyleColorsDark();
+  ////ImGui::StyleColorsClassic();
 
-  // Load Fonts
-  // - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use ImGui::PushFont()/PopFont() to select them. 
-  // - AddFontFromFileTTF() will return the ImFont* so you can store it if you need to select the font among multiple. 
-  // - If the file cannot be loaded, the function will return NULL. Please handle those errors in your application (e.g. use an assertion, or display an error and quit).
-  // - The fonts will be rasterized at a given size (w/ oversampling) and stored into a texture when calling ImFontAtlas::Build()/GetTexDataAsXXXX(), which ImGui_ImplXXXX_NewFrame below will call.
-  // - Read 'misc/fonts/README.txt' for more instructions and details.
-  // - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
-  //io.Fonts->AddFontDefault();
-  io.Fonts->AddFontFromFileTTF("../share/fonts/Roboto-Medium.ttf", 16.0f);
-  io.Fonts->AddFontFromFileTTF("../share/fonts/Cousine-Regular.ttf", 15.0f);
-  io.Fonts->AddFontFromFileTTF("../share/fonts/DroidSans.ttf", 16.0f);
-  io.Fonts->AddFontFromFileTTF("../share/fonts/ProggyTiny.ttf", 10.0f);
-  //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
-  //IM_ASSERT(font != NULL);
+  //// Load Fonts
+  //// - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use ImGui::PushFont()/PopFont() to select them. 
+  //// - AddFontFromFileTTF() will return the ImFont* so you can store it if you need to select the font among multiple. 
+  //// - If the file cannot be loaded, the function will return NULL. Please handle those errors in your application (e.g. use an assertion, or display an error and quit).
+  //// - The fonts will be rasterized at a given size (w/ oversampling) and stored into a texture when calling ImFontAtlas::Build()/GetTexDataAsXXXX(), which ImGui_ImplXXXX_NewFrame below will call.
+  //// - Read 'misc/fonts/README.txt' for more instructions and details.
+  //// - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
+  ////io.Fonts->AddFontDefault();
+  //io.Fonts->AddFontFromFileTTF("../share/fonts/Roboto-Medium.ttf", 16.0f);
+  //io.Fonts->AddFontFromFileTTF("../share/fonts/Cousine-Regular.ttf", 15.0f);
+  //io.Fonts->AddFontFromFileTTF("../share/fonts/DroidSans.ttf", 16.0f);
+  //io.Fonts->AddFontFromFileTTF("../share/fonts/ProggyTiny.ttf", 10.0f);
+  ////ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
+  ////IM_ASSERT(font != NULL);
 
 
-  menu.show_demo_window = true;
-  menu.show_another_window = false;
-  menu.show_yet_another_window = true;
+  //menu.show_demo_window = true;
+  //menu.show_another_window = false;
+  //menu.show_yet_another_window = true;
 
   ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -470,7 +326,6 @@ int main(int argc, char** argv)
       ImGui::Text("Hello, world!");                           // Display some text (you can use a format string too)
       ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f    
       ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
       ImGui::Checkbox("Demo Window", &menu.show_demo_window);      // Edit bools storing our windows open/close state
       ImGui::Checkbox("Another Window", &menu.show_another_window);
 
@@ -486,7 +341,6 @@ int main(int argc, char** argv)
     if(menu.show_main_menu)
     {
       ImGui::Begin("Main Menu Window", &menu.show_main_menu);
-
       ImGui::Checkbox("Demo Window",    &menu.show_demo_window);      // Edit bools storing our windows open/close state
       ImGui::Checkbox("Another Window", &menu.show_another_window);
       ImGui::Checkbox("Yet Another Window", &menu.show_yet_another_window);
@@ -505,9 +359,9 @@ int main(int argc, char** argv)
     {
       auto cur_w = ImGui::GetWindowWidth();
       auto cur_h = ImGui::GetWindowHeight();
-      auto wpos = ImGui::GetWindowPos();
-      auto wmin = ImGui::GetWindowContentRegionMin();
-      auto wmax = ImGui::GetWindowContentRegionMax();
+      auto wpos  = ImGui::GetWindowPos();
+      auto wmin  = ImGui::GetWindowContentRegionMin();
+      auto wmax  = ImGui::GetWindowContentRegionMax();
       // Get the current cursor position (where your window is)
       std::cout << " wpos " << wpos.x << ", " << wpos.y  << "\n";
       std::cout << " wmin " << wmin.x << ", " << wmin.y  << "\n";

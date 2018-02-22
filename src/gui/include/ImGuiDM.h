@@ -11,6 +11,7 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 
+class GLFWwindow;
 
 namespace ImGuiDM {
 
@@ -82,7 +83,7 @@ namespace ImGuiDM {
 
     ImGuiDMApplication(){}
     
-    void Init(){ }
+    void Init(GLFWwindow* window);
 
     void Render(){ }
 

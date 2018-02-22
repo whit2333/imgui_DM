@@ -36,7 +36,7 @@ target_compile_features(demo
     PUBLIC cxx_auto_type
     PUBLIC cxx_trailing_return_types
     PRIVATE cxx_variadic_templates
-  PRIVATE cxx_std_14
+  PRIVATE cxx_std_17
     )
 
 # --------------------------------------------------------
