@@ -47,15 +47,15 @@ bool fexists(const std::string& filename) {
 //______________________________________________________________________________
 
 std::string exec(const char* cmd) {
-   std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
-   if (!pipe) return "ERROR";
-   char buffer[128];
-   std::string result = "";
-   while (!feof(pipe.get())) {
-      if (fgets(buffer, 128, pipe.get()) != NULL)
-         result += buffer;
-   }
-   return result;
+  std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
+  if (!pipe) return "ERROR";
+  char buffer[128];
+  std::string result = "";
+  while (!feof(pipe.get())) {
+    if (fgets(buffer, 128, pipe.get()) != NULL)
+      result += buffer;
+  }
+  return result;
 }
 //______________________________________________________________________________
 
@@ -212,9 +212,9 @@ int main(int argc, char** argv)
     }
   }
 
-  std::cout << " the rest of the arguments: " << S.theRest << std::endl;
-  std::cout << "output : " << S.output_file_name << std::endl;
-  std::cout << "  tree : " << S.output_tree_name << std::endl;
+  //std::cout << " the rest of the arguments: " << S.theRest << std::endl;
+  //std::cout << "output : " << S.output_file_name << std::endl;
+  //std::cout << "  tree : " << S.output_tree_name << std::endl;
   //________________________________________________________________
 
   const char* env_user = std::getenv("USER");
@@ -224,6 +224,9 @@ int main(int argc, char** argv)
     std::string(env_user)+":circle:x",
     std::string(env_user)+":circle:y"
   };
+  for(const auto& pv : pvs) {
+    std::cout << pv << "\n";
+  }
 
   ImGuiDM::PVGetList get_list1(pvs);
 
