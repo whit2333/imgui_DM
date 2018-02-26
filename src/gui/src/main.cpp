@@ -363,9 +363,9 @@ int main(int argc, char** argv)
       auto wmin  = ImGui::GetWindowContentRegionMin();
       auto wmax  = ImGui::GetWindowContentRegionMax();
       // Get the current cursor position (where your window is)
-      std::cout << " wpos " << wpos.x << ", " << wpos.y  << "\n";
-      std::cout << " wmin " << wmin.x << ", " << wmin.y  << "\n";
-      std::cout << " wmax " << wmax.x << ", " << wmax.y  << "\n";
+      //std::cout << " wpos " << wpos.x << ", " << wpos.y  << "\n";
+      //std::cout << " wmin " << wmin.x << ", " << wmin.y  << "\n";
+      //std::cout << " wmax " << wmax.x << ", " << wmax.y  << "\n";
       float x_margin = 0.05*wmax.x;
       float y_margin = 0.05*wmax.y;
       float x_plot_range  = wmax.x - wmin.x - 2.0*x_margin;
