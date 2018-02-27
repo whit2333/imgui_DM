@@ -239,7 +239,7 @@ int main(int argc, char** argv)
   std::thread thread_1(
     [&](){
       while(!quit_polling) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
         get_list1.Poll();
         if(get_list1.GetN()>=3){
         h1->Fill(get_list1.GetValue(2));
@@ -515,16 +515,16 @@ int main(int argc, char** argv)
       //std::cout << "\n";
 
       if(get_list1.GetN()>=4){
-      ImGui::PlotLines(get_list1.GetName(0).c_str(), get_list1.GetBuffer(0).data()+get_list1.GetBufferOffset(0), get_list1.GetBufferSize(0), 
+      ImGui::PlotLines(get_list1.GetName(0).c_str(), get_list1.GetBufferCopy(0).data(), get_list1.GetBufferSize(0), 
                        0, "A", -1.0f, 300.0f, ImVec2(0,80));
 
-      ImGui::PlotLines(get_list1.GetName(1).c_str(), get_list1.GetBuffer(1).data()+get_list1.GetBufferOffset(1), get_list1.GetBufferSize(1),
+      ImGui::PlotLines(get_list1.GetName(1).c_str(), get_list1.GetBufferCopy(1).data(), get_list1.GetBufferSize(1),
                        0, "B", -1.0f, 1.0f, ImVec2(0,80));
 
-      ImGui::PlotLines(get_list1.GetName(2).c_str(), get_list1.GetBuffer(2).data()+get_list1.GetBufferOffset(2), get_list1.GetBufferSize(2), 
+      ImGui::PlotLines(get_list1.GetName(2).c_str(), get_list1.GetBufferCopy(2).data(), get_list1.GetBufferSize(2), 
                        0, "C", -1.0f, 1.0f, ImVec2(0,80));
 
-      ImGui::PlotLines(get_list1.GetName(3).c_str(), get_list1.GetBuffer(3).data()+get_list1.GetBufferOffset(3), get_list1.GetBufferSize(3), 
+      ImGui::PlotLines(get_list1.GetName(3).c_str(), get_list1.GetBufferCopy(3).data(), get_list1.GetBufferSize(3), 
                        0, "C", -1.0f, 1.0f, ImVec2(0,80));
 
       }
@@ -548,16 +548,19 @@ int main(int argc, char** argv)
       //
       std::vector<std::string> names = {get_list1.GetName(0),get_list1.GetName(1),get_list1.GetName(2)};
       std::vector<ImColor> colors =  {ImColor(255,255,0,100), ImColor(0,255,0,100),ImColor(255,0,0,200)};//const ImColor* colors,
-      get_list1.GetBufferCopy(0);
-      get_list1.GetBufferCopy(1);
-      get_list1.GetBufferCopy(2);
+      //std::vector<std::vector<float>> buff_copies = {
+      //  get_list1.GetBufferCopy(0),
+      //  get_list1.GetBufferCopy(1),
+      //  get_list1.GetBufferCopy(2)
+      //};
 
-      ImGui::PlotMultiHistograms(
-        "DERP",
-        names,
-        colors,
-        get_list1.m_buffer_copy,
-        -1.0, 1.0, ImVec2(0,80));
+      //ImGui::PlotMultiHistograms(
+      //  "DERP",
+      //  names,
+      //  colors,
+      //  //get_list1.m_buffer_copy,
+      //  buff_copies
+      //  -1.0, 1.0, ImVec2(0,80));
 
       }
 

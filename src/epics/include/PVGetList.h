@@ -11,6 +11,34 @@
 
 namespace ImGuiDM {
 
+  /** PV Buffer.
+   *  Actuall the buffer is twice the size of fBufferMaxSize so that when 
+   *  it gets full the buffer is rotated about the middle. This avoids 
+   *  constantly moving memory around. Only half the buffer (index to fBufferMaxSize)
+   *  should be considered valid at any moment.
+   *
+   */
+  class PVBuffer {
+  public:
+    int                fBufferMaxSize = 1000;
+    int                fArrayIndex    = 0;
+    std::vector<float> fBuffer;
+    std::vector<float> fBufferCopy;
+
+    PVBuffer(float init_val = 0.0);
+
+    int                 GetIndex() const { return fArrayIndex; }
+    int                 GetMaxSize() const { return fBufferMaxSize; }
+    void                Add(float val);
+    int                 GetOffset() const;
+    std::vector<float>& GetBufferCopy();
+
+  private:
+    class Impl;
+    std::shared_ptr<Impl> m_impl;
+  };
+
+
   /** PV Get-List. Continuously updated list of variables.
    *
    */
@@ -30,11 +58,7 @@ namespace ImGuiDM {
     PV_value_map          m_pv_values;
     PV_channel_map        m_pv_channels;
     std::vector<int>      m_array_index;
-
-    std::vector<PV_value_map> m_pv_buffers;
-    int  m_buffer_max      = 1000;
-
-    std::vector<PV_value_map> m_buffer_copy;
+    std::vector<PVBuffer> m_pv_buffers;
 
   public:
     PVGetList();
@@ -53,19 +77,15 @@ namespace ImGuiDM {
     std::string GetName(int n) const { return m_pv_names.at(n);}
 
     // This would load history at startup
-    void Init() { } 
+    void Init() { }
 
-    int GetN() const {return m_N_pvs;}
-
+    int          GetN() const { return m_N_pvs; }
     unsigned int GetNBuffers() const { m_pv_buffers.size(); }
-    int GetBufferSize(int n) const ;
+    int          GetBufferSize(int n) const ;
+    int          GetBufferOffset(int n) const ;
 
-    int GetBufferOffset(int n) const ;
-    
-
-    //const std::vector<float>& GetBuffer(int n) const { return m_pv_buffers.at(n); }
-    std::vector<float>&      GetBuffer(int n) ;
-    std::vector<float>&      GetBufferCopy(int n) ;
+    PVBuffer&            GetBuffer(int n) ;
+    std::vector<float>&  GetBufferCopy(int n) ;
 
     void PrintAll() const;
 

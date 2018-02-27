@@ -83,10 +83,10 @@ include_directories(${CMAKE_SOURCE_DIR} ${ROOT_INCLUDE_DIRS})
 #add_definitions(${ROOT_CXX_FLAGS})
 
 add_subdirectory(src/3rd_party)
-add_subdirectory(src/sfml_root)
 add_subdirectory(src/epics)
-add_subdirectory(src/gl_test)
 add_subdirectory(src/gui)
+#add_subdirectory(src/sfml_root)
+#add_subdirectory(src/gl_test)
 
 
 ## CPack packaging
