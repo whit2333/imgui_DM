@@ -5,10 +5,43 @@
 #include <GL/gl3w.h>// This example is using gl3w to access OpenGL functions (because it is small). You may use glew/glad/glLoadGen/etc. whatever already works for you.
 #include <GLFW/glfw3.h>
 
+static void error_callback(int error, const char* description)
+{
+  fprintf(stderr, "Error %d: %s\n", error, description);
+}
+//______________________________________________________________________________
+
 namespace ImGuiDM {
 
+  Application::Application()
+  {
+  }
+  //______________________________________________________________________________
 
-  void ImGuiDMApplication::Init(GLFWwindow* window)
+  GLFWwindow* Application::CreateWindow(int w, int h)
+  {
+    // ---------------------------------------------------------------------------
+    // Setup window
+    // ---------------------------------------------------------------------------
+    glfwSetErrorCallback(error_callback);
+    if (!glfwInit())
+      return nullptr;
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#if __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+    //GLFWwindow* 
+    window = glfwCreateWindow(1280, 720, "ImGui OpenGL3 example", NULL, NULL);
+    glfwMakeContextCurrent(window);
+    glfwSwapInterval(1); // Enable vsync
+    gl3wInit();
+    return window;
+  }
+  //______________________________________________________________________________
+
+  void Application::Init(GLFWwindow* window)
   {
     // Setup ImGui binding
     ImGui::CreateContext();
@@ -19,7 +52,7 @@ namespace ImGuiDM {
     //io.NavFlags |= ImGuiNavFlags_EnableGamepad;   // Enable Gamepad Controls
 
     // Setup style
-    ImGui::StyleColorsDark();
+    ImGui::StyleColorsLight();
     //ImGui::StyleColorsClassic();
 
     // Load Fonts

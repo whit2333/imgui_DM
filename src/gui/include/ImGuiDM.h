@@ -73,16 +73,17 @@ namespace ImGuiDM {
   };
   //______________________________________________________________________________
 
-  class ImGuiDMApplication {
+  class Application {
   public:
-    Settings  settings;
-    MainMenu  menu;
-    GPSConfig gps_conf;
-
+    Settings    settings;
+    MainMenu    menu;
+    GPSConfig   gps_conf;
+    GLFWwindow* window;
   public:
 
-    ImGuiDMApplication(){}
+    Application();
     
+    GLFWwindow* CreateWindow(int w = 1280, int h = 720);
     void Init(GLFWwindow* window);
 
     void Render(){ }

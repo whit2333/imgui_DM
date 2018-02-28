@@ -7,6 +7,9 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules" "${CMAKE_SOU
 #
 set(IMGUIDM_VERSION_MAJOR 1)
 set(IMGUIDM_VERSION_MINOR 0)
+set(IMGUIDM_FONT_DIR ${CMAKE_INSTALL_PREFIX}/share/imgui_DM/fonts)
+
+
 configure_file(
   "${PROJECT_SOURCE_DIR}/config.h.in"
   "${PROJECT_BINARY_DIR}/config.h"

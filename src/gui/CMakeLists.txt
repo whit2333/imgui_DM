@@ -1,5 +1,6 @@
 cmake_minimum_required (VERSION 3.5)
 
+
 configure_file(
   "ImGuiDMConfig.h.in"
   "${PROJECT_BINARY_DIR}/ImGuiDMConfig.h"
@@ -11,6 +12,7 @@ find_package(Threads REQUIRED)
 #
 add_executable(demo 
   src/main.cpp
+  src/helpers.cpp
   src/ImGuiDM.cpp
   ../3rd_party/addons/imguivariouscontrols/imguivariouscontrols.cpp
   #../3rd_party/metrics_gui/source/metrics_gui.cpp

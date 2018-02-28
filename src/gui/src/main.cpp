@@ -22,96 +22,14 @@
 #include <iomanip>
 #include <sstream>
 
+#include "helpers.h"
 
-template<class C>
-void print_help(C cli)
-{
-  std::cout << make_man_page(cli, "bubble_chamber") << "\n";
-}
-//______________________________________________________________________________
-
-template<typename T>
-void print_usage(T cli, const char* argv0 )
-{
-  //used default formatting
-  std::cout << "Usage:\n" << usage_lines(cli, argv0)
-            << "\nOptions:\n" << documentation(cli) << '\n';
-}
-//______________________________________________________________________________
-
-bool fexists(const std::string& filename) {
-   std::ifstream ifile(filename.c_str());
-   if( ifile ) return true;
-   return false;
-}
-//______________________________________________________________________________
-
-std::string exec(const char* cmd) {
-  std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
-  if (!pipe) return "ERROR";
-  char buffer[128];
-  std::string result = "";
-  while (!feof(pipe.get())) {
-    if (fgets(buffer, 128, pipe.get()) != NULL)
-      result += buffer;
-  }
-  return result;
-}
-//______________________________________________________________________________
-
-void copy_files(const std::vector<std::string>& files)
-{
-  for(const auto& f: files) {
-    std::string cmd = std::string("cp ") + f + " .";
-    if( fexists(f) ) {
-      std::cout << "copying " << f << std::endl;
-      exec(cmd.c_str());
-    }
-  }
-}
-//______________________________________________________________________________
-
-template<typename T>
-void print_man_page(T cli, const char* argv0 ){
-  //all formatting options (with their default values)
-  auto fmt = clipp::doc_formatting{}
-  .start_column(8)                           //column where usage lines and documentation starts
-  .doc_column(30)                            //parameter docstring start col
-  .indent_size(4)                            //indent of documentation lines for children of a documented group
-  .line_spacing(0)                           //number of empty lines after single documentation lines
-  .paragraph_spacing(1)                      //number of empty lines before and after paragraphs
-  .flag_separator(", ")                      //between flags of the same parameter
-  .param_separator(" ")                      //between parameters 
-  .group_separator(" ")                      //between groups (in usage)
-  .alternative_param_separator("|")          //between alternative flags 
-  .alternative_group_separator(" | ")        //between alternative groups 
-  .surround_group("(", ")")                  //surround groups with these 
-  .surround_alternatives("(", ")")           //surround group of alternatives with these
-  .surround_alternative_flags("", "")        //surround alternative flags with these
-  .surround_joinable("(", ")")               //surround group of joinable flags with these
-  .surround_optional("[", "]")               //surround optional parameters with these
-  .surround_repeat("", "...");                //surround repeatable parameters with these
-  //.surround_value("<", ">")                  //surround values with these
-  //.empty_label("")                           //used if parameter has no flags and no label
-  //.max_alternative_flags_in_usage(1)         //max. # of flags per parameter in usage
-  //.max_alternative_flags_in_doc(2)           //max. # of flags per parameter in detailed documentation
-  //.split_alternatives(true)                  //split usage into several lines for large alternatives
-  //.alternatives_min_split_size(3)            //min. # of parameters for separate usage line
-  //.merge_alternative_flags_with_common_prefix(false)  //-ab(cdxy|xy) instead of -abcdxy|-abxy
-  //.merge_joinable_flags_with_common_prefix(true);    //-abc instead of -a -b -c
-  auto mp = make_man_page(cli, argv0, fmt);
-  mp.prepend_section("DESCRIPTION", "Bubble chamber simulation");
-  mp.append_section("EXAMPLES", " $ bubble_chamber -h ");
-  std::cout << mp << "\n";
-}
-//______________________________________________________________________________
 
 static void error_callback(int error, const char* description)
 {
   fprintf(stderr, "Error %d: %s\n", error, description);
 }
 //______________________________________________________________________________
-
 
 int main(int argc, char** argv)
 {
@@ -120,7 +38,7 @@ int main(int argc, char** argv)
   using CopyMode = ImGuiDM::Settings::CopyMode;
   using Mode     = ImGuiDM::Settings::Mode;
 
-  ImGuiDM::ImGuiDMApplication app;
+  ImGuiDM::Application app;
   auto& menu     = app.menu;
   auto& S        = app.settings;
   auto& gps_conf = app.gps_conf;
@@ -144,7 +62,6 @@ int main(int argc, char** argv)
   };
 
   cout << "args -> parameter mapping:\n";
-  ;
   for(const auto& m0 : result) {
     std::cout << "#" << m0.index() << " " << m0.arg() << " -> ";
     auto p = m0.param();
@@ -257,29 +174,15 @@ int main(int argc, char** argv)
   // ---------------------------------------------------------------------------
   // Setup window
   // ---------------------------------------------------------------------------
-  glfwSetErrorCallback(error_callback);
-  if (!glfwInit())
-    return 1;
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#if __APPLE__
-  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
-  int w = 1280;
-  int h = 720;
-  GLFWwindow* window = glfwCreateWindow(1280, 720, "ImGui OpenGL3 example", NULL, NULL);
-  glfwMakeContextCurrent(window);
-  glfwSwapInterval(1); // Enable vsync
-  gl3wInit();
+  GLFWwindow* window = app.CreateWindow(1280, 720);
 
-  //// Setup ImGui binding
-  //ImGui::CreateContext();
-  //ImGuiIO& io = ImGui::GetIO();
-  ////(void)io;
-  //ImGui_ImplGlfwGL3_Init(window, true);
-  ////io.NavFlags |= ImGuiNavFlags_EnableKeyboard;  // Enable Keyboard Controls
-  ////io.NavFlags |= ImGuiNavFlags_EnableGamepad;   // Enable Gamepad Controls
+  ////// Setup ImGui binding
+  ////ImGui::CreateContext();
+  ////ImGuiIO& io = ImGui::GetIO();
+  //////(void)io;
+  ////ImGui_ImplGlfwGL3_Init(window, true);
+  //////io.NavFlags |= ImGuiNavFlags_EnableKeyboard;  // Enable Keyboard Controls
+  //////io.NavFlags |= ImGuiNavFlags_EnableGamepad;   // Enable Gamepad Controls
 
   app.Init(window);
   //// Setup style
