@@ -20,7 +20,8 @@ cd imguiDM
 mkdir build && cd build
 cmake ../.
 make
-./src/gui/demo
+make install
+./src/gui/imgui_dm
 ```
 
 The demo will search and timeout while it waits for some PV channels to open.  
