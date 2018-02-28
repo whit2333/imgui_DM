@@ -48,6 +48,13 @@ target_include_directories(epics PUBLIC
   $<INSTALL_INTERFACE:include>
 )
 
+install(TARGETS epics EXPORT ImguiDMTargets
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include
+  )
+
 
 # ----------------------------------------------
 # Tests

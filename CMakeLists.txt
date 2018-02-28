@@ -91,6 +91,10 @@ add_subdirectory(src/gui)
 #add_subdirectory(src/sfml_root)
 #add_subdirectory(src/gl_test)
 
+install(DIRECTORY share/fonts
+  DESTINATION share/imgui_DM
+  )
+
 
 ## CPack packaging
 #include(InstallRequiredSystemLibraries)
