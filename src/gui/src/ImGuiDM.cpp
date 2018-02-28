@@ -4,6 +4,7 @@
 #include "imgui_impl_glfw_gl3.h"
 #include <GL/gl3w.h>// This example is using gl3w to access OpenGL functions (because it is small). You may use glew/glad/glLoadGen/etc. whatever already works for you.
 #include <GLFW/glfw3.h>
+#include "ImGuiDMConfig.h"
 
 static void error_callback(int error, const char* description)
 {
@@ -63,10 +64,10 @@ namespace ImGuiDM {
     // - Read 'misc/fonts/README.txt' for more instructions and details.
     // - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
     //io.Fonts->AddFontDefault();
-    io.Fonts->AddFontFromFileTTF("../share/fonts/Roboto-Medium.ttf", 16.0f);
-    io.Fonts->AddFontFromFileTTF("../share/fonts/Cousine-Regular.ttf", 15.0f);
-    io.Fonts->AddFontFromFileTTF("../share/fonts/DroidSans.ttf", 16.0f);
-    io.Fonts->AddFontFromFileTTF("../share/fonts/ProggyTiny.ttf", 10.0f);
+    io.Fonts->AddFontFromFileTTF(IMGUIDM_FONT_DIR "/Roboto-Medium.ttf", 16.0f);
+    io.Fonts->AddFontFromFileTTF(IMGUIDM_FONT_DIR "/Cousine-Regular.ttf", 15.0f);
+    io.Fonts->AddFontFromFileTTF(IMGUIDM_FONT_DIR "/DroidSans.ttf", 16.0f);
+    io.Fonts->AddFontFromFileTTF(IMGUIDM_FONT_DIR "/ProggyTiny.ttf", 10.0f);
     //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
     //IM_ASSERT(font != NULL);
 

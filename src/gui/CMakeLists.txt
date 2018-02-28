@@ -9,8 +9,8 @@ configure_file(
 find_package(Threads REQUIRED)
 
 # --------------------------------------------------------
-#
-add_executable(demo 
+
+add_executable(imgui_dm 
   src/main.cpp
   src/helpers.cpp
   src/ImGuiDM.cpp
@@ -18,7 +18,7 @@ add_executable(demo
   #../3rd_party/metrics_gui/source/metrics_gui.cpp
   include/ImGuiDM.h
   )
-target_link_libraries(demo 
+target_link_libraries(imgui_dm 
   ImGui 
   epics 
   Threads::Threads
@@ -27,20 +27,26 @@ target_link_libraries(demo
   ${ROOT_LIBRARIES} 
   ${OPENGL_LIBRARIES}
   )
-target_include_directories(demo
+target_include_directories(imgui_dm
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
   PUBLIC include
   PUBLIC ../3rd_party/imgui
   PUBLIC ../3rd_party/addons/imguivariouscontrols
   PUBLIC ${EPICS_INCLUDE_DIRS}
   )
-target_compile_features(demo
+target_compile_features(imgui_dm
     PUBLIC cxx_auto_type
     PUBLIC cxx_trailing_return_types
     PRIVATE cxx_variadic_templates
-  PRIVATE cxx_std_17
+    PRIVATE cxx_std_17
     )
 
+install(TARGETS imgui_dm EXPORT ImguiDMTargets
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include
+  )
 # --------------------------------------------------------
 #
 add_executable(demo2
