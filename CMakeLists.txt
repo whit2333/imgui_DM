@@ -73,16 +73,16 @@ message(STATUS "EPICS_DEFINITIONS=${EPICS_DEFINITIONS}")
 
 
 # Find Libraries
-list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
-find_package(ROOT REQUIRED 
-  COMPONENTS
-  MathCore RIO Hist MathMore Graf
-  Graf3d Gpad GX11 Gviz3d RGL Eve
-  #GeomPainter X3d Gviz3d RGL
-  #Eve EG Foam GenVector Geom GLEW Gui HistPainter MathCore Matrix MLP Net
-  Physics Spectrum Thread Tree TreeViewer)
-include(${ROOT_USE_FILE})
-include_directories(${CMAKE_SOURCE_DIR} ${ROOT_INCLUDE_DIRS})
+#list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
+#find_package(ROOT REQUIRED 
+#  COMPONENTS
+#  MathCore RIO Hist MathMore Graf
+#  Graf3d Gpad GX11 Gviz3d RGL Eve
+#  #GeomPainter X3d Gviz3d RGL
+#  #Eve EG Foam GenVector Geom GLEW Gui HistPainter MathCore Matrix MLP Net
+#  Physics Spectrum Thread Tree TreeViewer)
+#include(${ROOT_USE_FILE})
+#include_directories(${CMAKE_SOURCE_DIR} ${ROOT_INCLUDE_DIRS})
 #add_definitions(${ROOT_CXX_FLAGS})
 
 add_subdirectory(src/3rd_party)
