@@ -8,8 +8,8 @@ set(IMGUI_SOURCES
   imgui/imgui_demo.cpp
   imgui/imgui_draw.cpp
   imgui/imgui_impl_glfw_gl3.cpp
-  imgui/dock/imgui_dock.cpp  
-  imgui/dock/imgui_widgets.cpp  
+  #imgui/dock/imgui_dock.cpp  
+  #imgui/dock/imgui_widgets.cpp  
 
   #imgui/ImWindowGLFW/ImwPlatformWindowGLFW.cpp
   #imgui/ImWindowGLFW/ImwWindowManagerGLFW.cpp
@@ -65,14 +65,14 @@ target_include_directories(ImGui PUBLIC
 
 # --------------------------------------------------------
 # container.cpp  rootcontainer.cpp  widgets.cpp
-add_executable(test_container 
-  tests/container.cpp
-  )
-target_link_libraries(test_container ImGui ${SFML_LIBRARIES} ${ROOT_LIBRARIES} ${OPENGL_LIBRARIES})
-target_include_directories(test_container
-  PUBLIC imgui
-  PUBLIC imgui/gl3w
-  PUBLIC imgui/dock
-  #PUBLIC imgui/ImWindow
-  #PUBLIC imgui/ImWindowGLFW
-  )
+#add_executable(test_container 
+#  tests/container.cpp
+#  )
+#target_link_libraries(test_container ImGui ${SFML_LIBRARIES} ${ROOT_LIBRARIES} ${OPENGL_LIBRARIES})
+#target_include_directories(test_container
+#  PUBLIC imgui
+#  PUBLIC imgui/gl3w
+#  PUBLIC imgui/dock
+#  #PUBLIC imgui/ImWindow
+#  #PUBLIC imgui/ImWindowGLFW
+#  )
