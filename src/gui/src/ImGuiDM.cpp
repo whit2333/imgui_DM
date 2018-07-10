@@ -18,6 +18,10 @@ namespace ImGuiDM {
   {
   }
   //______________________________________________________________________________
+    
+  Application::~Application(){
+    ImGui::DestroyContext();
+  }
 
   GLFWwindow* Application::CreateWindow(int w, int h)
   {
@@ -33,8 +37,8 @@ namespace ImGuiDM {
 #if __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
-    //GLFWwindow* 
-    window = glfwCreateWindow(1280, 720, "ImGui OpenGL3 example", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(1280, 720, "ImGui OpenGL3 example", NULL, NULL);
+    windows.push_back(window);
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
     gl3wInit();
@@ -46,8 +50,7 @@ namespace ImGuiDM {
   {
     // Setup ImGui binding
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    //(void)io;
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
     ImGui_ImplGlfwGL3_Init(window, true);
     //io.NavFlags |= ImGuiNavFlags_EnableKeyboard;  // Enable Keyboard Controls
     //io.NavFlags |= ImGuiNavFlags_EnableGamepad;   // Enable Gamepad Controls
@@ -71,11 +74,9 @@ namespace ImGuiDM {
     //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
     //IM_ASSERT(font != NULL);
 
-
     menu.show_demo_window = true;
     menu.show_another_window = false;
     menu.show_yet_another_window = true;
-
   }
 
   struct PlotVarData

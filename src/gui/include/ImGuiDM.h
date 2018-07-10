@@ -78,10 +78,12 @@ namespace ImGuiDM {
     Settings    settings;
     MainMenu    menu;
     GPSConfig   gps_conf;
-    GLFWwindow* window;
+    std::vector<GLFWwindow*> windows;
+
   public:
 
     Application();
+    ~Application();
     
     GLFWwindow* CreateWindow(int w = 1280, int h = 720);
     void Init(GLFWwindow* window);

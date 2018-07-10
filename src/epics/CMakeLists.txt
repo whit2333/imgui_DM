@@ -72,12 +72,9 @@ target_include_directories(${test_name} PUBLIC
 target_link_libraries(${test_name} 
   PRIVATE epics  
   PRIVATE ImGui  
+  PRIVATE Catch
   ${EPICS_LIBRARIES}
-  ${ROOT_LIBRARIES} ${OPENGL_LIBRARIES} -lGLEW -lGLU -lGL
   )
-
-target_link_libraries(${test_name}
-  PRIVATE Catch)
 add_test(NAME ${test_name} COMMAND ${test_name})
 
 

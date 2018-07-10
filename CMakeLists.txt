@@ -24,13 +24,18 @@ add_subdirectory(src/3rd_party/catch)
 
 # --------------------------------------------------------------------------
 # Detect and add SFML
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
-find_package(SFML 1.6 REQUIRED system window graphics network audio)
+#set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
+#find_package(SFML 1.6 REQUIRED system window graphics network audio)
 
 # --------------------------------------------------------------------------
 # OpenGL
 find_package(OpenGL REQUIRED)
-
+find_package(glfw3 REQUIRED)
+#find_package(GLEW REQUIRED)
+#if (GLEW_FOUND)
+#    include_directories(${GLEW_INCLUDE_DIRS})
+#    link_libraries(${GLEW_LIBRARIES})
+#endif()
 # --------------------------------------------------------------------------
 # EPICS (https://github.com/mdavidsaver/cmake4epics)
 find_package(EPICSHostArch)

@@ -445,8 +445,8 @@ int main(int argc, char** argv)
       }
 
       // inside a ImGui::Window:
-      ImGui::TestProgressBar();
-      ImGui::TestPopupMenuSimple();
+      //ImGui::TestProgressBar();
+      //ImGui::TestPopupMenuSimple();
 
       if(get_list1.GetN()>=4){
       //
@@ -498,12 +498,13 @@ int main(int argc, char** argv)
     glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
     glClear(GL_COLOR_BUFFER_BIT);
     ImGui::Render();
+    ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
     glfwSwapBuffers(window);
   }
 
   // Cleanup
+  quit_polling = true;
   ImGui_ImplGlfwGL3_Shutdown();
-  ImGui::DestroyContext();
   glfwTerminate();
 
   thread_1.join();
