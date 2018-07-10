@@ -17,11 +17,12 @@ Useful:
 ```
 git clone ...
 cd imguiDM
+git submodule update --init --recursive
 mkdir build && cd build
 cmake ../.
 make
 make install
-./src/gui/imgui_dm
+imgui_dm
 ```
 
 The demo will search and timeout while it waits for some PV channels to open.  
