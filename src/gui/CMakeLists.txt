@@ -29,6 +29,7 @@ target_link_libraries(imgui_dm
 target_include_directories(imgui_dm
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
   PUBLIC include
+  PUBLIC ../3rd_party/imgui/examples
   PUBLIC ../3rd_party/imgui
   PUBLIC ../3rd_party/addons/imguivariouscontrols
   PUBLIC ${EPICS_INCLUDE_DIRS}
@@ -74,6 +75,7 @@ target_include_directories(${test_name} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
   PUBLIC src/3rd_party/imgui
+  PUBLIC ${CMAKE_SOURCE_DIR}/src/3rd_party/imgui/examples
   )
 target_link_libraries(${test_name} 
   PRIVATE ImGui  ${OPENGL_LIBRARIES} -lGLU -lGL )

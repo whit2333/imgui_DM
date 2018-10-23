@@ -1,11 +1,12 @@
 #include "ImGuiDM.h"
 #include <map>
 #include "imgui.h"
+#include "imgui_impl_glfw.h"
 #define OLDER_OGL 1
 #ifdef OLDER_OGL
-#include "imgui_impl_glfw_gl2.h"
+#include "imgui_impl_opengl2.h"
 #else
-#include "imgui_impl_glfw_gl3.h"
+#include "imgui_impl_opengl3.h"
 #endif
 #include <GL/gl3w.h>// This example is using gl3w to access OpenGL functions (because it is small). You may use glew/glad/glLoadGen/etc. whatever already works for you.
 #include <GLFW/glfw3.h>
@@ -34,34 +35,43 @@ namespace ImGuiDM {
     // Setup window
     // ---------------------------------------------------------------------------
     glfwSetErrorCallback(error_callback);
+    // Setup window
     if (!glfwInit())
-      return nullptr;
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-    //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#if __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
-
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "ImGui OpenGL3 example", NULL, NULL);
-
-    windows.push_back(window);
+        return nullptr;
+    GLFWwindow* window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+OpenGL2 example", NULL, NULL);
+    if (window == nullptr)
+        return nullptr;
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
-    gl3wInit();
+
+    //glfwSetErrorCallback(glfw_error_callback);
+    //if (!glfwInit())
+    //  return nullptr;
+    //glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+    //glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    ////glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    //GLFWwindow* window = glfwCreateWindow(1280, 720, "ImGui OpenGL3 example", NULL, NULL);
+
+    windows.push_back(window);
     return window;
   }
   //______________________________________________________________________________
 
   void Application::Init(GLFWwindow* window)
   {
-    // Setup ImGui binding
+    // Setup Dear ImGui binding
+    IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;   // Enable Gamepad Controls
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+
+    //ImGui::StyleColorsClassic();
 #ifdef OLDER_OGL
-    ImGui_ImplGlfwGL2_Init(window, true);
+    ImGui_ImplOpenGL2_Init();//window, true);
 #else
-    ImGui_ImplGlfwGL3_Init(window, true);
+    ImGui_ImplOpenGL3_Init();//window, true);
 #endif
     //io.NavFlags |= ImGuiNavFlags_EnableKeyboard;  // Enable Keyboard Controls
     //io.NavFlags |= ImGuiNavFlags_EnableGamepad;   // Enable Gamepad Controls
@@ -69,6 +79,7 @@ namespace ImGuiDM {
     // Setup style
     ImGui::StyleColorsLight();
     //ImGui::StyleColorsClassic();
+    //ImGui::StyleColorsDark();
 
     // Load Fonts
     // - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use ImGui::PushFont()/PopFont() to select them. 

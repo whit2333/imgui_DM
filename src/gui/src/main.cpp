@@ -4,11 +4,12 @@
 // (GL3W is a helper library to access OpenGL functions since there is no standard header to access modern OpenGL functions easily. Alternatives are GLEW, Glad, etc.)
 
 #include "imgui.h"
+#include "imgui_impl_glfw.h"
 #define OLDER_OGL 1
 #ifdef OLDER_OGL
-#include "imgui_impl_glfw_gl2.h"
+#include "imgui_impl_opengl2.h"
 #else
-#include "imgui_impl_glfw_gl3.h"
+#include "imgui_impl_opengl3.h"
 #endif
 #include <stdio.h>
 #include <math.h>
@@ -141,10 +142,11 @@ int main(int argc, char** argv)
 
   const char* env_user = std::getenv("USER");
   std::vector<std::string> pvs = {
-    std::string(env_user)+":circle:angle",
-    std::string(env_user)+":circle:period",
-    std::string(env_user)+":circle:x",
-    std::string(env_user)+":circle:y"
+    "IBC3H00CRCUR4",
+    "IPM3C00.XPOS",
+    "IPM3C00.YPOS",
+    "CPI671SC",
+    "CFI6711C"
   };
   for(const auto& pv : pvs) {
     std::cout << pv << "\n";
@@ -225,13 +227,18 @@ int main(int argc, char** argv)
     // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
     // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
     glfwPollEvents();
+
 #ifdef OLDER_OGL
     //ImGui_ImplGlfwGL2_Init(window, true);
-    ImGui_ImplGlfwGL2_NewFrame();
+    //ImGui_ImplGlfwGL2_NewFrame();
+    ImGui_ImplOpenGL2_NewFrame();
 #else
     //ImGui_ImplGlfwGL3_Init(window, true);
-    ImGui_ImplGlfwGL3_NewFrame();
+    //ImGui_ImplGlfwGL3_NewFrame();
+    ImGui_ImplOpenGL3_NewFrame();
 #endif
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
 
     // 1. Show a simple window.
     // Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets automatically appears in a window called "Debug".
@@ -241,6 +248,22 @@ int main(int argc, char** argv)
       static float f = 0.0f;
       static int counter = 0;
       ImGui::Text("Hello, world!");                           // Display some text (you can use a format string too)
+      static char str0[200] = "some PV";
+      static int i0 = 150;
+      ImGui::InputText("input text", str0, IM_ARRAYSIZE(str0));
+
+      //  bool reclaim_focus = false;
+      //  if (ImGui::InputText("Input", InputBuf, IM_ARRAYSIZE(InputBuf), ImGuiInputTextFlags_EnterReturnsTrue|ImGuiInputTextFlags_CallbackCompletion|ImGuiInputTextFlags_CallbackHistory, &TextEditCallbackStub, (void*)this))
+      //  {
+      //      Strtrim(InputBuf);
+      //      if (InputBuf[0])
+      //          ExecCommand(InputBuf);
+      //      strcpy(InputBuf, "");
+      //      reclaim_focus = true;
+      //  }
+
+        // Demonstrate keeping focus on the input box
+
       ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f    
       ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
       ImGui::Checkbox("Demo Window", &menu.show_demo_window);      // Edit bools storing our windows open/close state
@@ -510,9 +533,11 @@ int main(int argc, char** argv)
     glClear(GL_COLOR_BUFFER_BIT);
     ImGui::Render();
 #ifdef OLDER_OGL
-    ImGui_ImplGlfwGL2_RenderDrawData(ImGui::GetDrawData());
+    //ImGui_ImplGlfwGL2_RenderDrawData(ImGui::GetDrawData());
+    ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
 #else
-    ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
+    //ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 #endif
     glfwSwapBuffers(window);
   }
@@ -520,9 +545,11 @@ int main(int argc, char** argv)
   // Cleanup
   quit_polling = true;
 #ifdef OLDER_OGL
-  ImGui_ImplGlfwGL2_Shutdown();
+  //ImGui_ImplGlfwGL2_Shutdown();
+  ImGui_ImplOpenGL2_Shutdown();
 #else
-  ImGui_ImplGlfwGL3_Shutdown();
+  //ImGui_ImplGlfwGL3_Shutdown();
+  ImGui_ImplOpenGL3_Shutdown();
 #endif
   glfwTerminate();
 

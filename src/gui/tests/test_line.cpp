@@ -1,9 +1,10 @@
 #include <imgui.h>
+
 #define OLDER_OGL 1
 #ifdef OLDER_OGL
-#include "imgui_impl_glfw_gl2.h"
+#include "imgui_impl_opengl2.h"
 #else
-#include "imgui_impl_glfw_gl3.h"
+#include "imgui_impl_opengl3.h"
 #endif
 #include <stdio.h>
 //#include <GL/glew.h>
@@ -179,9 +180,11 @@ int main(int, char**)
   ImGui::CreateContext();
   ImGuiIO& io = ImGui::GetIO(); (void)io;
 #ifdef OLDER_OGL
-    ImGui_ImplGlfwGL2_Init(window, true);
+    ImGui_ImplOpenGL2_Init();
+    //ImGui_ImplGlfwGL2_Init(window, true);
 #else
-    ImGui_ImplGlfwGL3_Init(window, true);
+    ImGui_ImplOpenGL3_Init();
+    //ImGui_ImplGlfwGL3_Init(window, true);
 #endif
   //io.NavFlags |= ImGuiNavFlags_EnableKeyboard;  // Enable Keyboard Controls
   //io.NavFlags |= ImGuiNavFlags_EnableGamepad;   // Enable Gamepad Controls
@@ -207,9 +210,11 @@ int main(int, char**)
   {
     glfwPollEvents();
 #ifdef OLDER_OGL
-    ImGui_ImplGlfwGL2_NewFrame();
+    //ImGui_ImplGlfwGL2_NewFrame();
+    ImGui_ImplOpenGL2_NewFrame();
 #else
-    ImGui_ImplGlfwGL3_NewFrame();
+    //ImGui_ImplGlfwGL3_NewFrame();
+    ImGui_ImplOpenGL3_NewFrame();
 #endif
 
     //Fenster --------------------------------------
@@ -331,9 +336,11 @@ int main(int, char**)
 
   // Cleanup
 #ifdef OLDER_OGL
-  ImGui_ImplGlfwGL2_Shutdown();
+  //ImGui_ImplGlfwGL2_Shutdown();
+  ImGui_ImplOpenGL2_Shutdown();
 #else
-  ImGui_ImplGlfwGL3_Shutdown();
+  //ImGui_ImplGlfwGL3_Shutdown();
+  ImGui_ImplOpenGL3_Shutdown();
 #endif
   glfwTerminate();
   return 0;

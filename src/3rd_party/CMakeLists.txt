@@ -7,8 +7,11 @@ set(IMGUI_SOURCES
   imgui/imgui.cpp
   imgui/imgui_demo.cpp
   imgui/imgui_draw.cpp
-  #imgui/examples/opengl3_example/imgui_impl_glfw_gl3.cpp
-  imgui/examples/opengl2_example/imgui_impl_glfw_gl2.cpp
+  imgui/imgui_widgets.cpp
+  #imgui/examples/imgui_impl_opengl3.cpp
+  imgui/examples/imgui_impl_opengl2.cpp
+  imgui/examples/imgui_impl_glfw.cpp
+  #imgui/examples/opengl2_example/imgui_impl_glfw_gl2.cpp
   #imgui/dock/imgui_dock.cpp  
   #imgui/dock/imgui_widgets.cpp  
   )
@@ -19,11 +22,12 @@ set(IMGUI_HEADERS
   imgui/imconfig.h
   imgui/imgui.h
   imgui/imgui_internal.h
-  imgui/stb_rect_pack.h
-  imgui/stb_textedit.h
-  imgui/stb_truetype.h
-  imgui/examples/opengl3_example/imgui_impl_glfw_gl3.h
-  imgui/examples/opengl2_example/imgui_impl_glfw_gl2.h
+  imgui/imstb_rectpack.h
+  imgui/imstb_textedit.h
+  imgui/imstb_truetype.h
+  imgui/examples/imgui_impl_opengl3.h
+  imgui/examples/imgui_impl_opengl2.h
+  imgui/examples/imgui_impl_glfw.h
   #imgui/dock/imgui_dock.h  
   #imgui/dock/imgui_widgets.h
   #imgui/ImWindow/ImwConfig.h       
@@ -44,8 +48,8 @@ target_link_libraries(ImGui ${OPENGL_LIBRARIES} glfw -lrt -lm -ldl )
 target_include_directories(ImGui
   PUBLIC imgui
   PUBLIC imgui/examples/libs/gl3w
-  PUBLIC imgui/examples/opengl3_example
-  PUBLIC imgui/examples/opengl2_example
+  PUBLIC imgui/examples/example_glfw_opengl3
+  PUBLIC imgui/examples/example_glfw_opengl2
   #PUBLIC imgui/dock
   #PUBLIC imgui/ImWindow
   #PUBLIC imgui/ImWindowGLFW
