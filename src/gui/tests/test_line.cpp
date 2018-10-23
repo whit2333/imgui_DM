@@ -1,5 +1,10 @@
 #include <imgui.h>
-#include <imgui_impl_glfw_gl3.h>
+#define OLDER_OGL 1
+#ifdef OLDER_OGL
+#include "imgui_impl_glfw_gl2.h"
+#else
+#include "imgui_impl_glfw_gl3.h"
+#endif
 #include <stdio.h>
 //#include <GL/glew.h>
 //#include <GL/glfw3.h>
@@ -173,7 +178,11 @@ int main(int, char**)
   //ImGuiIO& io = ImGui::GetIO(); (void)io;
   ImGui::CreateContext();
   ImGuiIO& io = ImGui::GetIO(); (void)io;
-  ImGui_ImplGlfwGL3_Init(window, true);
+#ifdef OLDER_OGL
+    ImGui_ImplGlfwGL2_Init(window, true);
+#else
+    ImGui_ImplGlfwGL3_Init(window, true);
+#endif
   //io.NavFlags |= ImGuiNavFlags_EnableKeyboard;  // Enable Keyboard Controls
   //io.NavFlags |= ImGuiNavFlags_EnableGamepad;   // Enable Gamepad Controls
 
@@ -197,7 +206,11 @@ int main(int, char**)
   while (!glfwWindowShouldClose(window))
   {
     glfwPollEvents();
+#ifdef OLDER_OGL
+    ImGui_ImplGlfwGL2_NewFrame();
+#else
     ImGui_ImplGlfwGL3_NewFrame();
+#endif
 
     //Fenster --------------------------------------
 
@@ -317,7 +330,11 @@ int main(int, char**)
   }
 
   // Cleanup
+#ifdef OLDER_OGL
+  ImGui_ImplGlfwGL2_Shutdown();
+#else
   ImGui_ImplGlfwGL3_Shutdown();
+#endif
   glfwTerminate();
   return 0;
 }

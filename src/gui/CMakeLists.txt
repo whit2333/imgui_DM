@@ -16,7 +16,7 @@ add_executable(imgui_dm
   src/ImGuiDM.cpp
   #../3rd_party/addons/imguivariouscontrols/imguivariouscontrols.cpp
   #../3rd_party/metrics_gui/source/metrics_gui.cpp
-  include/ImGuiDM.h
+  #include/ImGuiDM.h
   )
 target_link_libraries(imgui_dm 
   ImGui 

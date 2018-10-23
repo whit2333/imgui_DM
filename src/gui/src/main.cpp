@@ -4,7 +4,12 @@
 // (GL3W is a helper library to access OpenGL functions since there is no standard header to access modern OpenGL functions easily. Alternatives are GLEW, Glad, etc.)
 
 #include "imgui.h"
+#define OLDER_OGL 1
+#ifdef OLDER_OGL
+#include "imgui_impl_glfw_gl2.h"
+#else
 #include "imgui_impl_glfw_gl3.h"
+#endif
 #include <stdio.h>
 #include <math.h>
 #include <thread>
@@ -220,7 +225,13 @@ int main(int argc, char** argv)
     // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
     // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
     glfwPollEvents();
+#ifdef OLDER_OGL
+    //ImGui_ImplGlfwGL2_Init(window, true);
+    ImGui_ImplGlfwGL2_NewFrame();
+#else
+    //ImGui_ImplGlfwGL3_Init(window, true);
     ImGui_ImplGlfwGL3_NewFrame();
+#endif
 
     // 1. Show a simple window.
     // Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets automatically appears in a window called "Debug".
@@ -498,13 +509,21 @@ int main(int argc, char** argv)
     glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
     glClear(GL_COLOR_BUFFER_BIT);
     ImGui::Render();
+#ifdef OLDER_OGL
+    ImGui_ImplGlfwGL2_RenderDrawData(ImGui::GetDrawData());
+#else
     ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
+#endif
     glfwSwapBuffers(window);
   }
 
   // Cleanup
   quit_polling = true;
+#ifdef OLDER_OGL
+  ImGui_ImplGlfwGL2_Shutdown();
+#else
   ImGui_ImplGlfwGL3_Shutdown();
+#endif
   glfwTerminate();
 
   thread_1.join();

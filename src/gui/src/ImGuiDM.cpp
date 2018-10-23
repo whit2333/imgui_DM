@@ -1,7 +1,12 @@
 #include "ImGuiDM.h"
 #include <map>
 #include "imgui.h"
+#define OLDER_OGL 1
+#ifdef OLDER_OGL
+#include "imgui_impl_glfw_gl2.h"
+#else
 #include "imgui_impl_glfw_gl3.h"
+#endif
 #include <GL/gl3w.h>// This example is using gl3w to access OpenGL functions (because it is small). You may use glew/glad/glLoadGen/etc. whatever already works for you.
 #include <GLFW/glfw3.h>
 #include "ImGuiDMConfig.h"
@@ -31,13 +36,15 @@ namespace ImGuiDM {
     glfwSetErrorCallback(error_callback);
     if (!glfwInit())
       return nullptr;
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #if __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
+
     GLFWwindow* window = glfwCreateWindow(1280, 720, "ImGui OpenGL3 example", NULL, NULL);
+
     windows.push_back(window);
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
@@ -51,7 +58,11 @@ namespace ImGuiDM {
     // Setup ImGui binding
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
+#ifdef OLDER_OGL
+    ImGui_ImplGlfwGL2_Init(window, true);
+#else
     ImGui_ImplGlfwGL3_Init(window, true);
+#endif
     //io.NavFlags |= ImGuiNavFlags_EnableKeyboard;  // Enable Keyboard Controls
     //io.NavFlags |= ImGuiNavFlags_EnableGamepad;   // Enable Gamepad Controls
 

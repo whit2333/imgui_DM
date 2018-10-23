@@ -7,7 +7,8 @@ set(IMGUI_SOURCES
   imgui/imgui.cpp
   imgui/imgui_demo.cpp
   imgui/imgui_draw.cpp
-  imgui/examples/opengl3_example/imgui_impl_glfw_gl3.cpp
+  #imgui/examples/opengl3_example/imgui_impl_glfw_gl3.cpp
+  imgui/examples/opengl2_example/imgui_impl_glfw_gl2.cpp
   #imgui/dock/imgui_dock.cpp  
   #imgui/dock/imgui_widgets.cpp  
   )
@@ -22,6 +23,7 @@ set(IMGUI_HEADERS
   imgui/stb_textedit.h
   imgui/stb_truetype.h
   imgui/examples/opengl3_example/imgui_impl_glfw_gl3.h
+  imgui/examples/opengl2_example/imgui_impl_glfw_gl2.h
   #imgui/dock/imgui_dock.h  
   #imgui/dock/imgui_widgets.h
   #imgui/ImWindow/ImwConfig.h       
@@ -43,6 +45,7 @@ target_include_directories(ImGui
   PUBLIC imgui
   PUBLIC imgui/examples/libs/gl3w
   PUBLIC imgui/examples/opengl3_example
+  PUBLIC imgui/examples/opengl2_example
   #PUBLIC imgui/dock
   #PUBLIC imgui/ImWindow
   #PUBLIC imgui/ImWindowGLFW
