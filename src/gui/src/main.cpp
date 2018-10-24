@@ -14,7 +14,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <thread>
-#include <GL/gl3w.h>// This example is using gl3w to access OpenGL functions (because it is small). You may use glew/glad/glLoadGen/etc. whatever already works for you.
+//#include <GL/gl3w.h>// This example is using gl3w to access OpenGL functions (because it is small). You may use glew/glad/glLoadGen/etc. whatever already works for you.
 #include <GLFW/glfw3.h>
 #include "PVMonitor.h"
 #include "PVGetList.h"
@@ -183,14 +183,6 @@ int main(int argc, char** argv)
   // ---------------------------------------------------------------------------
   GLFWwindow* window = app.CreateWindow(1280, 720);
 
-  ////// Setup ImGui binding
-  ////ImGui::CreateContext();
-  ////ImGuiIO& io = ImGui::GetIO();
-  //////(void)io;
-  ////ImGui_ImplGlfwGL3_Init(window, true);
-  //////io.NavFlags |= ImGuiNavFlags_EnableKeyboard;  // Enable Keyboard Controls
-  //////io.NavFlags |= ImGuiNavFlags_EnableGamepad;   // Enable Gamepad Controls
-
   app.Init(window);
   //// Setup style
   //ImGui::StyleColorsDark();
@@ -208,13 +200,8 @@ int main(int argc, char** argv)
   //io.Fonts->AddFontFromFileTTF("../share/fonts/Cousine-Regular.ttf", 15.0f);
   //io.Fonts->AddFontFromFileTTF("../share/fonts/DroidSans.ttf", 16.0f);
   //io.Fonts->AddFontFromFileTTF("../share/fonts/ProggyTiny.ttf", 10.0f);
-  ////ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
-  ////IM_ASSERT(font != NULL);
 
 
-  //menu.show_demo_window = true;
-  //menu.show_another_window = false;
-  //menu.show_yet_another_window = true;
 
   ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -239,6 +226,7 @@ int main(int argc, char** argv)
 #endif
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+
 
     // 1. Show a simple window.
     // Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets automatically appears in a window called "Debug".
@@ -400,7 +388,6 @@ int main(int argc, char** argv)
       ImGui::PushItemWidth(-140);                                 // Right align, keep 140 pixels for labels
       //static float f = 0.0f;
       //static int counter = 0;
-      ImGui::Text("DERP DERP!");                           // Display some text (you can use a format string too)
 
       static bool animate = true;
       ImGui::Checkbox("Animate", &animate);
@@ -474,8 +461,8 @@ int main(int argc, char** argv)
      
       
       if(get_list1.GetN()>=4){
-      ImGuiDM::PlotVar("Speed", get_list1.GetValue(2));
-      ImGuiDM::PlotVar("Speed2", get_list1.GetValue(3));
+        ImGuiDM::PlotVar("Speed", get_list1.GetValue(2));
+        ImGuiDM::PlotVar("Speed2", get_list1.GetValue(3));
       }
 
       // inside a ImGui::Window:
@@ -526,12 +513,17 @@ int main(int argc, char** argv)
     }
 
     // Rendering
+    ImGui::Render();
     int display_w, display_h;
     glfwGetFramebufferSize(window, &display_w, &display_h);
     glViewport(0, 0, display_w, display_h);
     glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-    glClear(GL_COLOR_BUFFER_BIT);
-    ImGui::Render();
+    // Rendering
+    //int display_w, display_h;
+    //glfwGetFramebufferSize(window, &display_w, &display_h);
+    //glViewport(0, 0, display_w, display_h);
+    //glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+    //glClear(GL_COLOR_BUFFER_BIT);
 #ifdef OLDER_OGL
     //ImGui_ImplGlfwGL2_RenderDrawData(ImGui::GetDrawData());
     ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
@@ -539,7 +531,9 @@ int main(int argc, char** argv)
     //ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 #endif
+    glfwMakeContextCurrent(window);
     glfwSwapBuffers(window);
+
   }
 
   // Cleanup

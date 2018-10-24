@@ -38,6 +38,8 @@ namespace ImGuiDM {
     // Setup window
     if (!glfwInit())
         return nullptr;
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     GLFWwindow* window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+OpenGL2 example", NULL, NULL);
     if (window == nullptr)
         return nullptr;
@@ -51,7 +53,6 @@ namespace ImGuiDM {
     //glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     ////glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     //GLFWwindow* window = glfwCreateWindow(1280, 720, "ImGui OpenGL3 example", NULL, NULL);
-
     windows.push_back(window);
     return window;
   }
@@ -67,7 +68,6 @@ namespace ImGuiDM {
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;   // Enable Gamepad Controls
     ImGui_ImplGlfw_InitForOpenGL(window, true);
 
-    //ImGui::StyleColorsClassic();
 #ifdef OLDER_OGL
     ImGui_ImplOpenGL2_Init();//window, true);
 #else
