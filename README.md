@@ -1,7 +1,7 @@
 ImGuiDM
 =======
 
-**WORK IN PROGRESS**
+**WORK IN PROGRESS** -- Not working experiment. 
 
 EPICS Display Manager based on [Dear ImGui](https://github.com/ocornut/imgui)
 
